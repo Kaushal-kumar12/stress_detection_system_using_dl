@@ -1,0 +1,27 @@
+# Python cache
+__pycache__/
+*.py[cod]
+*.pyc
+*.pyo
+
+# Virtual Environment
+venv/
+
+# Django stuff to ignore
+db.sqlite3
+*.log
+.env
+
+# macOS
+.DS_Store
+
+# VS Code
+.vscode/
+
+# Optional: ignore media folder
+media/
+models/
+data/
+
+# Migrations (optional, but recommended for large teams)
+**/migrations/

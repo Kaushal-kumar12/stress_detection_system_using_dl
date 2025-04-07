@@ -1,0 +1,83 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Homepage</title>
+
+    <!-- Link to external stylesheet (if any) -->
+    <link rel="stylesheet" href="{% static 'css/styles.css' %}">
+    
+    <style>
+        /* Add the background image */
+        body {
+            background-image: url("{% static 'images/background.jpg' %}");
+            background-size: cover;
+            background-position: center center;
+            background-repeat: no-repeat;
+            height: 100vh;  /* Full height of the page */
+            margin: 0;      /* Remove default margin */
+            display: flex;
+            justify-content: center; /* Center horizontally */
+            align-items: center;     /* Center vertically */
+            text-align: center;
+            color: white;   /* Text color for contrast */
+        }
+
+        /* Container for content with transparent background */
+        .content-container {
+            background-color: rgba(0, 0, 0, 0.5);  /* Semi-transparent black background */
+            padding: 40px 60px;
+            border-radius: 15px;
+            text-align: center;
+            width: 80%;
+            max-width: 600px;  /* Maximum width */
+        }
+
+        /* Add styling for heading */
+        h1 {
+            font-size: 3em;
+            margin-bottom: 20px;
+        }
+
+        /* Style for buttons */
+        .btn {
+            padding: 15px 30px;
+            margin: 10px;
+            font-size: 1.2em;
+            color: white;
+            background-color: #007BFF;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            text-decoration: none;
+            display: inline-block;
+            transition: background-color 0.3s ease;
+        }
+
+        .btn:hover {
+            background-color: #0056b3;
+        }
+
+        /* Container for the buttons */
+        .button-container {
+            margin-top: 30px;
+        }
+
+    </style>
+</head>
+<body>
+    <div class="content-container">
+        <h1>Welcome to the Stress Detection System</h1>
+        <p>Explore our platform to assess emotional well-being through facial expressions and more!</p>
+
+        <!-- Buttons container -->
+        <div class="button-container">
+            <a href="{% url 'register' %}" class="btn">Register</a>
+            <a href="{% url 'login' %}" class="btn">Login</a>
+        </div>
+    </div>
+</body>
+</html>

@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Live Emotion Detection</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+            background-color: #f4f4f9;
+            color: #333;
+        }
+        h1 {
+            margin-top: 20px;
+        }
+        video {
+            border: 2px solid #333;
+            margin-top: 20px;
+        }
+        #emotion {
+            margin-top: 10px;
+            font-size: 1.2em;
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+    <h1>Live Emotion Detection</h1>
+    
+    <div>
+        <video id="webcam" width="640" height="480" autoplay></video>
+        <p id="emotion">Detecting emotion...</p> <!-- Display detected emotion -->
+    </div>
+    
+    <script>
+        let videoElement = document.getElementById("webcam");
+        let emotionElement = document.getElementById("emotion");
+
+        // Access the user's webcam
+        navigator.mediaDevices.getUserMedia({ video: true })
+            .then(stream => {
+                videoElement.srcObject = stream;
+            })
+            .catch(err => {
+                alert("Webcam not accessible: " + err.message);
+            });
+
+        // Function to capture frames and send them to the server for emotion detection
+        function captureFrame() {
+            let canvas = document.createElement("canvas");
+            canvas.width = videoElement.videoWidth || 640;
+            canvas.height = videoElement.videoHeight || 480;
+
+            let context = canvas.getContext("2d");
+            context.drawImage(videoElement, 0, 0, canvas.width, canvas.height);
+
+            let imageData = canvas.toDataURL("image/jpeg");
+
+            // Send the image data to the server
+            fetch("/users/livecam/", {
+                method: "POST",
+                body: JSON.stringify({ image: imageData }),
+                headers: {
+                    "Content-Type": "application/json",
+                },
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.emotion) {
+                    // Display detected emotion
+                    emotionElement.textContent = "Emotion: " + data.emotion;
+                } else {
+                    emotionElement.textContent = "No emotion detected!";
+                }
+            })
+            .catch(error => {
+                console.error("Error:", error);
+                emotionElement.textContent = "Error detecting emotion!";
+            });
+        }
+
+        // Call captureFrame every 500ms for smoother updates
+        setInterval(captureFrame, 500);
+    </script>
+</body>
+</html>

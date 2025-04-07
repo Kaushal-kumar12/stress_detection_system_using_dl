@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Video Result</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f7f7f7;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+        }
+        h2 {
+            color: #333;
+            margin-bottom: 10px;
+            font-size: 24px;
+        }
+        #originalVideo, #processedVideo {
+            width: 100%;
+            max-width: 800px;
+            height: 450px;
+            margin-bottom: 20px;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+        #emotionDisplay {
+            margin-top: 20px;
+            font-size: 18px;
+            color: #555;
+            background-color: #fff;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            max-width: 800px;
+            width: 100%;
+        }
+        #emotionDisplay p {
+            margin: 10px 0;
+        }
+        .spinner {
+            border: 8px solid #f3f3f3;
+            border-top: 8px solid #3498db;
+            border-radius: 50%;
+            width: 50px;
+            height: 50px;
+            animation: spin 1s linear infinite;
+            margin-top: 20px;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        #loadingSpinner {
+            display: none;
+            text-align: center;
+            margin-top: 20px;
+        }
+
+        /* Styling for the page */
+        .content-container {
+            width: 90%;
+            max-width: 1000px;
+            margin-top: 20px;
+        }
+    </style>
+</head>
+<body>
+
+<div class="content-container">
+    <h2>Original Video</h2>
+    <video id="originalVideo" controls>
+        <source src="{{ original_video_url }}" type="video/mp4">
+        Your browser does not support the video tag.
+    </video>
+
+    <h2>Processed Video</h2>
+    <video id="processedVideo" controls>
+        <source src="{{ processed_video_url }}" type="video/mp4">
+        Your browser does not support the video tag.
+    </video>
+
+    <h2>Emotion Analysis (Real-Time)</h2>
+    <div id="emotionDisplay">
+        <p><strong>Time:</strong> <span id="currentTime">0.00</span> sec</p>
+        <p><strong>Emotion:</strong> <span id="currentEmotion">Loading...</span></p>
+    </div>
+
+    <div id="loadingSpinner">
+        <p>Processing video...</p>
+        <div class="spinner"></div>
+    </div>
+</div>
+
+<script>
+    const emotionsData = JSON.parse('{{ emotions_data|safe }}');
+    const processedVideo = document.getElementById("processedVideo");
+    const currentTimeDisplay = document.getElementById("currentTime");
+    const currentEmotionDisplay = document.getElementById("currentEmotion");
+    const loadingSpinner = document.getElementById("loadingSpinner");
+
+    // Show the loading spinner when the video starts playing
+    processedVideo.addEventListener("play", function() {
+        loadingSpinner.style.display = 'block';
+    });
+
+    processedVideo.addEventListener("timeupdate", function() {
+        let currentTime = processedVideo.currentTime.toFixed(2);
+        currentTimeDisplay.innerText = currentTime;
+
+        let detectedEmotion = "No data";
+        for (let i = 0; i < emotionsData.length; i++) {
+            if (parseFloat(emotionsData[i].time) >= parseFloat(currentTime)) {
+                detectedEmotion = emotionsData[i].emotion;
+                break;
+            }
+        }
+        currentEmotionDisplay.innerText = detectedEmotion;
+    });
+
+    // Hide the loading spinner when the video ends
+    processedVideo.addEventListener("ended", function() {
+        loadingSpinner.style.display = 'none';
+    });
+</script>
+
+</body>
+</html>
